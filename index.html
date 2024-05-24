@@ -1,75 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>IMDb Search Results</title>
-  <style>
-    .result {
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-    .result img {
-      float: left;
-      margin-right: 10px;
-      max-width: 100px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMDb Search</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>IMDb Search Results</h1>
+    <div id="search-container">
+        <input type="text" id="search-term" placeholder="Enter movie, TV show, etc.">
+        <button id="search-button">Search</button>
+    </div>
 
-<input type="text" id="search-term" placeholder="Enter your search term...">
-<button onclick="searchIMDb()">Search</button>
+    <div id="results" class="results"></div>
 
-<div id="search-results">
-  <!-- Search results will be displayed here -->
-</div>
-
-<script>
-  // Function to handle the search
-  function searchIMDb() {
-    const searchTerm = document.getElementById("search-term").value;
-
-    // Fetch search results from IMDb API
-    fetch(`https://v3.sg.media-imdb.com/suggestion/x/${searchTerm}.json?includeVideos=1`)
-      .then(response => response.json())
-      .then(data => {
-        displaySearchResults(data.d);
-      })
-      .catch(error => {
-        console.error("Error fetching data:", error);
-        // Display an error message to the user
-        const resultsContainer = document.getElementById("search-results");
-        resultsContainer.innerHTML = "<p>Error fetching search results. Please try again later.</p>";
-      });
-  }
-
-  // Function to display search results
-  function displaySearchResults(results) {
-    const resultsContainer = document.getElementById("search-results");
-    resultsContainer.innerHTML = ''; // Clear previous results
-
-    for (const result of results) {
-      const resultDiv = document.createElement("div");
-      resultDiv.classList.add("result");
-
-      // Check if an image is available
-      if (result.i) {
-        const img = document.createElement("img");
-        img.src = result.i.imageUrl;
-        img.alt = result.l;
-        resultDiv.appendChild(img);
-      }
-
-      const title = document.createElement("h3");
-      title.textContent = result.l;
-      resultDiv.appendChild(title);
-
-      resultsContainer.appendChild(resultDiv);
-    }
-  }
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
