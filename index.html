@@ -17,10 +17,19 @@
       border: 1px solid #ccc;
       padding: 10px;
       cursor: pointer;
+      position: relative; /* To position the iframe */
     }
     .movie-item img {
       width: 100%;
       height: auto;
+    }
+    .movie-item .player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none; /* Initially hidden */
     }
   </style>
 </head>
@@ -48,29 +57,28 @@
 
     // Function to display movies on the page
     function displayMovies(movies) {
-      movies.forEach(movie => {
+      movies.result.forEach(movie => {
         const movieItem = document.createElement('div');
         movieItem.classList.add('movie-item');
-        // Assuming you have movie poster URLs in the API response
         movieItem.innerHTML = `
           <img src="${movie.poster_url}" alt="${movie.title}">
           <p>${movie.title}</p>
         `;
 
-        // Get the embed URL for the movie
-        const embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${movie.tmdb_id}`;
         // Create the iframe element and add referrerpolicy attribute
         const iframe = document.createElement('iframe');
-        iframe.src = embedUrl;
+        iframe.src = movie.embed_url; 
         iframe.style.width = "100%";
         iframe.style.height = "300px";
         iframe.setAttribute('referrerpolicy', 'origin');
+        iframe.classList.add('player'); // Add class for styling
+
+        // Append iframe to movie item
+        movieItem.appendChild(iframe);
 
         // Add click event to the movie item to show the player
         movieItem.addEventListener('click', () => {
-          // Display the iframe
-          movieItem.innerHTML = ''; // Clear the previous content
-          movieItem.appendChild(iframe);
+          iframe.style.display = 'block'; // Show the iframe
         });
 
         movieList.appendChild(movieItem);
