@@ -23,14 +23,6 @@
       width: 100%;
       height: auto;
     }
-    .movie-item .player {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: none; /* Initially hidden */
-    }
   </style>
 </head>
 <body>
@@ -65,21 +57,13 @@
           <p>${movie.title}</p>
         `;
 
-        // Create the iframe element and add referrerpolicy attribute
-        const iframe = document.createElement('iframe');
-        iframe.src = movie.embed_url; 
-        iframe.style.width = "100%";
-        iframe.style.height = "300px";
-        iframe.setAttribute('referrerpolicy', 'origin');
-        iframe.classList.add('player'); // Add class for styling
-
-        // Add click event to the movie item to show the player
+        // Add click event to the movie item to open a new page with the player
         movieItem.addEventListener('click', () => {
-          iframe.style.display = 'block'; // Show the iframe
+          // Get the embed URL for the movie
+          const embedUrl = movie.embed_url;
+          // Open a new window with the player URL
+          window.open(embedUrl, '_blank');
         });
-
-        // Append iframe to movie item AFTER the click event is set up
-        movieItem.appendChild(iframe);
 
         movieList.appendChild(movieItem);
       });
