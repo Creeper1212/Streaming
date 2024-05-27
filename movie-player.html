@@ -8,13 +8,35 @@
   <iframe id="movie-player" src="" style="width: 100%; height: 500px;" referrerpolicy="origin"></iframe>
 
   <script>
-    // Get the embed URL from the query parameters
+    // Get the TMDb ID from the query parameters
     const params = new URLSearchParams(window.location.search);
-    const embedUrl = params.get('embedUrl');
+    const tmdbId = params.get('tmdbId');
+    const apiKey = '0750b3ed2cd386ac84492758e9f3d5b6'; // Your TMDb API key
+
+    // Fetch the embed URL from Vidsrc using the TMDb ID
+    async function fetchEmbedUrl(tmdbId) {
+      try {
+        const response = await fetch(`https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`);
+        const data = await response.json();
+        return data.embed_url;
+      } catch (error) {
+        console.error("Error fetching embed URL:", error);
+        alert("An error occurred while fetching the embed URL. Please try again later.");
+        return null;
+      }
+    }
 
     // Set the iframe src to the embed URL
-    const player = document.getElementById('movie-player');
-    player.src = decodeURIComponent(embedUrl); 
+    async function setPlayerSource() {
+      const embedUrl = await fetchEmbedUrl(tmdbId);
+      if (embedUrl) {
+        const player = document.getElementById('movie-player');
+        player.src = embedUrl;
+      }
+    }
+
+    setPlayerSource(); // Call the function to fetch and set the embed URL
+
   </script>
 </body>
 </html>
