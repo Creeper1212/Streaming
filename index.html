@@ -73,13 +73,13 @@
         iframe.setAttribute('referrerpolicy', 'origin');
         iframe.classList.add('player'); // Add class for styling
 
-        // Append iframe to movie item
-        movieItem.appendChild(iframe);
-
         // Add click event to the movie item to show the player
         movieItem.addEventListener('click', () => {
           iframe.style.display = 'block'; // Show the iframe
         });
+
+        // Append iframe to movie item AFTER the click event is set up
+        movieItem.appendChild(iframe);
 
         movieList.appendChild(movieItem);
       });
