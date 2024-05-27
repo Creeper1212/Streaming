@@ -42,22 +42,15 @@
       margin-top: 5px;
       font-size: 14px;
     }
-    .page-selector {
-      display: flex;
-      justify-content: center;
+    .search-container {
       padding: 10px;
+      text-align: center;
     }
-    .page-button {
-      padding: 8px 12px;
-      margin: 0 5px;
-      background-color: #333;
-      color: #fff;
-      border: none;
+    .search-input {
+      padding: 8px;
+      border: 1px solid #ccc;
       border-radius: 4px;
-      cursor: pointer;
-    }
-    .page-button.active {
-      background-color: #4CAF50; /* Green for active */
+      font-size: 16px;
     }
   </style>
 </head>
@@ -67,26 +60,27 @@
     <h1>Movie List</h1>
   </header>
 
-  <div class="movie-list">
-    </div>
+  <div class="search-container">
+    <input type="text" class="search-input" id="search-input" placeholder="Search for movies...">
+    <button id="search-button">Search</button>
+  </div>
 
-  <div class="page-selector">
+  <div class="movie-list">
     </div>
 
   <script>
     const movieList = document.querySelector('.movie-list');
-    const pageSelector = document.querySelector('.page-selector');
-    let currentPage = 1; // Start with page 1
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const apiKey = '0750b3ed2cd386ac84492758e9f3d5b6'; // Your TMDb API key
 
-    // Function to fetch and display movies
-    async function fetchMovies(page = currentPage) {
-      const apiUrl = `https://vidsrc.xyz/movies/latest/page-${page}.json`;
+    // Function to fetch and display movies from TMDb
+    async function fetchMovies(query) {
+      const apiUrl = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}`;
       try {
         const response = await fetch(apiUrl);
-        const movies = await response.json();
-        displayMovies(movies);
-        updatePageSelector(page); // Update page selector
-        console.log("Fetched movies for page:", page); // Debugging: Log page number
+        const data = await response.json();
+        displayMovies(data.results);
       } catch (error) {
         console.error("Error fetching movies:", error);
         alert("An error occurred while fetching movies. Please try again later.");
@@ -96,45 +90,28 @@
     // Function to display movies on the page
     function displayMovies(movies) {
       movieList.innerHTML = ''; // Clear previous movies
-      movies.result.forEach(movie => {
+      movies.forEach(movie => {
         const movieItem = document.createElement('div');
         movieItem.classList.add('movie-item');
         movieItem.innerHTML = `
-          <img src="${movie.poster_url}" alt="${movie.title}">
+          <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
           <p>${movie.title}</p>
         `;
 
         // Add click event to the movie item to open a new page with the player
         movieItem.addEventListener('click', () => {
-          const embedUrl = movie.embed_url;
-          window.location.href = `movie-player.html?embedUrl=${encodeURIComponent(embedUrl)}`;
+          window.location.href = `movie-player.html?tmdbId=${movie.id}`;
         });
 
         movieList.appendChild(movieItem);
       });
     }
 
-    // Function to update page selector buttons
-    function updatePageSelector(currentPage) {
-      pageSelector.innerHTML = ''; // Clear previous buttons
-      const numPages = 10; // Adjust this based on Vidsrc API data
-      for (let i = 1; i <= numPages; i++) {
-        const button = document.createElement('button');
-        button.classList.add('page-button');
-        button.textContent = i;
-        if (i === currentPage) {
-          button.classList.add('active');
-        }
-        button.addEventListener('click', () => {
-          currentPage = i;
-          fetchMovies(currentPage);
-        });
-        pageSelector.appendChild(button);
-      }
-    }
-
-    // Initial fetch on page load
-    fetchMovies();
+    // Event listener for the search button
+    searchButton.addEventListener('click', () => {
+      const query = searchInput.value;
+      fetchMovies(query);
+    });
 
   </script>
 
