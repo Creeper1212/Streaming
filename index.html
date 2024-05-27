@@ -31,6 +31,56 @@
   <div class="movie-list">
     </div>
 
+  <script>
+    const movieList = document.querySelector('.movie-list');
+
+    // Function to fetch and display movies
+    async function fetchMovies(page = 1) {
+      const apiUrl = `https://vidsrc.xyz/movies/latest/page-${page}.json`;
+      try {
+        const response = await fetch(apiUrl);
+        const movies = await response.json();
+        displayMovies(movies);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
+    }
+
+    // Function to display movies on the page
+    function displayMovies(movies) {
+      movies.forEach(movie => {
+        const movieItem = document.createElement('div');
+        movieItem.classList.add('movie-item');
+        // Assuming you have movie poster URLs in the API response
+        movieItem.innerHTML = `
+          <img src="${movie.poster_url}" alt="${movie.title}">
+          <p>${movie.title}</p>
+        `;
+
+        // Get the embed URL for the movie
+        const embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${movie.tmdb_id}`;
+        // Create the iframe element and add referrerpolicy attribute
+        const iframe = document.createElement('iframe');
+        iframe.src = embedUrl;
+        iframe.style.width = "100%";
+        iframe.style.height = "300px";
+        iframe.setAttribute('referrerpolicy', 'origin');
+
+        // Add click event to the movie item to show the player
+        movieItem.addEventListener('click', () => {
+          // Display the iframe
+          movieItem.innerHTML = ''; // Clear the previous content
+          movieItem.appendChild(iframe);
+        });
+
+        movieList.appendChild(movieItem);
+      });
+    }
+
+    // Call the function to fetch and display the first page of movies
+    fetchMovies();
+
+  </script>
 
 </body>
 </html>
