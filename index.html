@@ -5,11 +5,24 @@
   <style>
     body {
       font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
     }
     .movie-list {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      padding: 20px;
     }
     .movie-item {
       width: 200px;
@@ -18,37 +31,72 @@
       padding: 10px;
       cursor: pointer;
       position: relative; /* To position the iframe */
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     .movie-item img {
       width: 100%;
-      height: auto;
+      height: 150px;
+      object-fit: cover;
+    }
+    .movie-item p {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .page-selector {
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+    }
+    .page-button {
+      padding: 8px 12px;
+      margin: 0 5px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .page-button.active {
+      background-color: #4CAF50; /* Green for active */
     }
   </style>
 </head>
 <body>
 
-  <h1>Movie List</h1>
+  <header>
+    <h1>Movie List</h1>
+  </header>
 
   <div class="movie-list">
     </div>
 
+  <div class="page-selector">
+    </div>
+
   <script>
     const movieList = document.querySelector('.movie-list');
+    const pageSelector = document.querySelector('.page-selector');
+    let currentPage = 1; // Start with page 1
 
     // Function to fetch and display movies
-    async function fetchMovies(page = 1) {
+    async function fetchMovies(page = currentPage) {
       const apiUrl = `https://vidsrc.xyz/movies/latest/page-${page}.json`;
       try {
         const response = await fetch(apiUrl);
         const movies = await response.json();
         displayMovies(movies);
+        updatePageSelector(page); // Update page selector
+        console.log("Fetched movies for page:", page); // Debugging: Log page number
       } catch (error) {
         console.error("Error fetching movies:", error);
+        alert("An error occurred while fetching movies. Please try again later.");
       }
     }
 
     // Function to display movies on the page
     function displayMovies(movies) {
+      movieList.innerHTML = ''; // Clear previous movies
       movies.result.forEach(movie => {
         const movieItem = document.createElement('div');
         movieItem.classList.add('movie-item');
@@ -57,11 +105,8 @@
           <p>${movie.title}</p>
         `;
 
-        // Add click event to the movie item to open a new page with the player
         movieItem.addEventListener('click', () => {
-          // Get the embed URL for the movie
           const embedUrl = movie.embed_url;
-          // Open a new window with the player URL
           window.open(embedUrl, '_blank');
         });
 
@@ -69,7 +114,26 @@
       });
     }
 
-    // Call the function to fetch and display the first page of movies
+    // Function to update page selector buttons
+    function updatePageSelector(currentPage) {
+      pageSelector.innerHTML = ''; // Clear previous buttons
+      const numPages = 10; // Adjust this based on Vidsrc API data
+      for (let i = 1; i <= numPages; i++) {
+        const button = document.createElement('button');
+        button.classList.add('page-button');
+        button.textContent = i;
+        if (i === currentPage) {
+          button.classList.add('active');
+        }
+        button.addEventListener('click', () => {
+          currentPage = i;
+          fetchMovies(currentPage);
+        });
+        pageSelector.appendChild(button);
+      }
+    }
+
+    // Initial fetch on page load
     fetchMovies();
 
   </script>
