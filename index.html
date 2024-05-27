@@ -1,20 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IMDb Search</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Movie List</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .movie-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .movie-item {
+      width: 200px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .movie-item img {
+      width: 100%;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="search-container">
-        <input type="text" id="search-term" placeholder="Enter movie, TV show, etc.">
-        <button id="search-button">Search</button>
+  <h1>Movie List</h1>
+
+  <div class="movie-list">
     </div>
 
-    <div id="results" class="results"></div>
 
-    <script src="script.js"></script>
 </body>
 </html>
